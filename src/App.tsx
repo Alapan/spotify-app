@@ -1,26 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { TextField } from '@mui/material';
+import { Autocomplete } from '@mui/material';
+import { Artist } from './types';
+import './styles/App.scss';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='container'>
+      <Autocomplete
+        disablePortal
+        id='artist-input'
+        options={artists}
+        sx={{ width: 300 }}
+        renderInput={(params) => <TextField {...params} label='Artist' />}
+      />
     </div>
   );
 }
+
+const artists: Artist[] = [];
 
 export default App;
