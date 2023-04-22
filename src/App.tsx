@@ -3,13 +3,17 @@ import { TextField } from '@mui/material';
 import { Autocomplete } from '@mui/material';
 import { Artist } from './types';
 import './styles/App.scss';
+import { getSpotifyAccessToken } from './api/auth';
 
 function App() {
   const [ artists, setArtists ] = useState([]);
 
   useEffect(() => {
-
-  });
+    const fetchToken = async () => {
+      return await getSpotifyAccessToken();
+    };
+    fetchToken().then((token) => console.log('TOKEN: ', token));
+  }, []);
 
   return (
     <div className='container'>
