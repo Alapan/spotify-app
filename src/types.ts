@@ -16,3 +16,7 @@ export interface Artist {
   href: string;
   images: ArtistImage[];
 }
+
+export interface AccessTokenState {
+  access_token: string;
+}
