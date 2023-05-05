@@ -1,24 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useCallback, useMemo } from 'react';
+import { TextField } from '@mui/material';
+import { Autocomplete } from '@mui/material';
+import { SpotifyArtist } from './types';
+import './styles/App.scss';
+import { getArtists } from './api/server';
+import { debounce } from './utils';
 
 function App() {
+  const [ artists, setArtists ] = useState<string[]>([]);
+
+  const updateArtists = useMemo(() => debounce(async (inputs) => {
+    const artists = await getArtists(inputs[0]);
+    const artistNames: string[] = artists.map((artist: SpotifyArtist) => artist.name)
+    setArtists(artistNames);
+  }, 1000), []);
+
+  const onInputChange = useCallback((e: any) => {
+    updateArtists(e.target.value);
+  }, [updateArtists]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='container'>
+      <Autocomplete
+        disablePortal
+        id='artist-input'
+        options={artists}
+        sx={{ width: 300 }}
+        onInputChange={onInputChange}
+        renderInput={(params) => <TextField {...params} label='Artist' />}
+      />
     </div>
   );
 }
