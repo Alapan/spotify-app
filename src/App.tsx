@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { TextField } from '@mui/material';
 import { Autocomplete } from '@mui/material';
-import { AccessTokenState, Artist } from './types';
+import { SpotifyArtist } from './types';
 import './styles/App.scss';
-import { getSpotifyAccessToken } from './api/auth'
+import { getArtists } from './api/server';
+import { debounce } from './utils';
 
 function App() {
-  const [ artists, setArtists ] = useState([]);
-  const [ accessTokenState, setAccessTokenState] = useState<AccessTokenState>({
-    access_token: ''
-  });
+  const [ artists, setArtists ] = useState<string[]>([]);
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      const token = await getSpotifyAccessToken();
-      setAccessTokenState(token);
-    }
-    fetchToken();
-  }, []);
+  const updateArtists = useMemo(() => debounce(async (inputs) => {
+    const artists = await getArtists(inputs[0]);
+    const artistNames: string[] = artists.map((artist: SpotifyArtist) => artist.name)
+    setArtists(artistNames);
+  }, 1000), []);
+
+  const onInputChange = useCallback((e: any) => {
+    updateArtists(e.target.value);
+  }, [updateArtists]);
 
   return (
     <div className='container'>
@@ -26,6 +26,7 @@ function App() {
         id='artist-input'
         options={artists}
         sx={{ width: 300 }}
+        onInputChange={onInputChange}
         renderInput={(params) => <TextField {...params} label='Artist' />}
       />
     </div>
