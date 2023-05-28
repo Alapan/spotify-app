@@ -9,3 +9,9 @@ export const getArtists = async (searchTerm: string) => {
   const response = await axios.get(`/artists/${searchTerm}`);
   return response.data.items;
 }
+
+export const getTracks = async (artistId: string) => {
+  if (!artistId) return null;
+  const response = await axios.get(`/artists/tracks/${artistId}`);
+  return response.data;
+}
